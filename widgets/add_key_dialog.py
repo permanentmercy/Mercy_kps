@@ -91,12 +91,11 @@ class AddKeyDialog(QDialog):
         self.accept()
 
     def retranslate_ui(self):
-        is_zh = Trans.get_language() == "zh_CN"
-        self.lbl_prompt.setText("请按下您想要添加的按键" if is_zh else "Press any key to add")
-        self.lbl_special_prompt.setText("或者选择添加特殊功能按钮：" if is_zh else "Or choose to add a special button:")
-        self.btn_kps.setText("每秒点击数 (KPS)" if is_zh else "KPS (Keys/s)")
-        self.btn_total.setText("总点击数 (Total)" if is_zh else "Total Clicks")
-        self.btn_active.setText("当前触发数 (Active)" if is_zh else "Active Keys")
+        self.lbl_prompt.setText(Trans.t("add_key_prompt", "请按下您想要添加的按键"))
+        self.lbl_special_prompt.setText(Trans.t("add_key_special_prompt", "或者选择添加特殊功能按钮："))
+        self.btn_kps.setText(Trans.t("add_key_kps", "每秒点击数 (KPS)"))
+        self.btn_total.setText(Trans.t("add_key_total", "总点击数 (Total)"))
+        self.btn_active.setText(Trans.t("add_key_active", "当前触发数 (Active)"))
 
     def showEvent(self, event):
         super().showEvent(event)

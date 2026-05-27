@@ -246,6 +246,24 @@ class KeyWidget(QWidget):
                 cox = int(cox * self.scale_x)
                 
             font.setPointSize(c_size)
+            
+            if self.cfg.get('counter_autofit', False):
+                from PyQt6.QtGui import QFontMetricsF
+                margin = 8
+                if self.is_preview:
+                    margin = int(margin * self.scale_x)
+                target_w = w - margin
+                if target_w < 4:
+                    target_w = 4
+                while c_size > 4:
+                    font.setPointSize(c_size)
+                    fm = QFontMetricsF(font)
+                    text_w = fm.horizontalAdvance(val)
+                    if text_w <= target_w:
+                        break
+                    c_size -= 1
+                font.setPointSize(c_size)
+                
             p.setFont(font)
             p.drawText(QRectF(cox, coy, w, h), Qt.AlignmentFlag.AlignCenter, val)
         else:

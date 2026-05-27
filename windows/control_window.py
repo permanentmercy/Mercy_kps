@@ -694,6 +694,11 @@ class ControlWindow(QWidget):
         self.chk_show_counter.stateChanged.connect(self._change_key_show_counter)
         vbox_tc.addWidget(self.chk_show_counter)
         
+        # Counter Autofit checkbox
+        self.chk_counter_autofit = QCheckBox()
+        self.chk_counter_autofit.stateChanged.connect(self._change_key_counter_autofit)
+        vbox_tc.addWidget(self.chk_counter_autofit)
+        
         # Simulate Press checkbox
         self.chk_simulate_press = QCheckBox()
         self.chk_simulate_press.stateChanged.connect(self._change_key_simulate_press)
@@ -854,6 +859,7 @@ class ControlWindow(QWidget):
         self.btn_select_profile.setText(Trans.t("select_profile", "选择配置文件"))
         self.btn_bind.setText(Trans.t("bind"))
         self.chk_show_counter.setText(Trans.t("show_counter", "显示按压次数"))
+        self.chk_counter_autofit.setText(Trans.t("counter_autofit", "次数自适应大小"))
         self.chk_simulate_press.setText(Trans.t("simulate_press_effect", "更新时模拟按下效果"))
         
         if self._current_edit_key_id:
@@ -903,6 +909,11 @@ class ControlWindow(QWidget):
             
         self.lbl_editor_key_size.setText(Trans.t("editor_key_size"))
         self.lbl_key_spacing.setText(Trans.t("key_spacing"))
+        
+        if hasattr(self, 'action_show_gui') and self.action_show_gui:
+            self.action_show_gui.setText(Trans.t("tray_open_settings", "打开设置 (Open Settings)"))
+        if hasattr(self, 'action_exit') and self.action_exit:
+            self.action_exit.setText(Trans.t("tray_exit", "退出 (Exit)"))
 
 
 
@@ -991,6 +1002,10 @@ class ControlWindow(QWidget):
                 self.chk_show_counter.blockSignals(True)
                 self.chk_show_counter.setChecked(k.get("show_counter", False))
                 self.chk_show_counter.blockSignals(False)
+                
+                self.chk_counter_autofit.blockSignals(True)
+                self.chk_counter_autofit.setChecked(k.get("counter_autofit", False))
+                self.chk_counter_autofit.blockSignals(False)
                 
                 self.chk_simulate_press.blockSignals(True)
                 self.chk_simulate_press.setChecked(k.get("simulate_press", False))
@@ -1184,6 +1199,17 @@ class ControlWindow(QWidget):
         for k in self._config.get("keys", []):
             if k.get("id") == self._current_edit_key_id:
                 k["show_counter"] = is_show
+                ConfigManager.save()
+                self.grid_canvas.reload_keys()
+                events.config_changed.emit(ConfigManager.load())
+                break
+
+    def _change_key_counter_autofit(self, state):
+        if not self._current_edit_key_id: return
+        is_autofit = self.chk_counter_autofit.isChecked()
+        for k in self._config.get("keys", []):
+            if k.get("id") == self._current_edit_key_id:
+                k["counter_autofit"] = is_autofit
                 ConfigManager.save()
                 self.grid_canvas.reload_keys()
                 events.config_changed.emit(ConfigManager.load())

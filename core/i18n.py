@@ -79,7 +79,17 @@ class Trans:
             "remove_selected": "删除选中",
             "nickname": "昵称",
             "rain_speed": "键雨速度:",
-            "rain_fade": "上升时渐隐"
+            "rain_fade": "上升时渐隐",
+            "counter_autofit": "次数自适应大小",
+            "add_key_prompt": "请按下您想要添加的按键",
+            "add_key_special_prompt": "或者选择添加特殊功能按钮：",
+            "add_key_kps": "每秒点击数 (KPS)",
+            "add_key_total": "总点击数 (Total)",
+            "add_key_active": "当前触发数 (Active)",
+            "old_color": "旧",
+            "new_color": "新",
+            "tray_open_settings": "打开设置 (Open Settings)",
+            "tray_exit": "退出 (Exit)"
         },
         "en_US": {
             "title": "KPS-Plus Editor",
@@ -156,7 +166,17 @@ class Trans:
             "remove_selected": "Remove Selected",
             "nickname": "Nickname",
             "rain_speed": "Rain Speed:",
-            "rain_fade": "Fade Out on Rise"
+            "rain_fade": "Fade Out on Rise",
+            "counter_autofit": "Adaptive Counter Size",
+            "add_key_prompt": "Press any key to add",
+            "add_key_special_prompt": "Or choose to add a special button:",
+            "add_key_kps": "KPS (Keys/s)",
+            "add_key_total": "Total Clicks",
+            "add_key_active": "Active Keys",
+            "old_color": "Old",
+            "new_color": "New",
+            "tray_open_settings": "Open Settings",
+            "tray_exit": "Exit"
         }
     }
     

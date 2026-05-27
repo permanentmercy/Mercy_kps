@@ -233,9 +233,9 @@ class SettingsDialog(QDialog):
         # Buttons
         btn_layout = QHBoxLayout()
         btn_layout.addStretch()
-        btn_close = QPushButton(Trans.t("close", "关闭"))
-        btn_close.clicked.connect(self.reject)
-        btn_layout.addWidget(btn_close)
+        self.btn_close = QPushButton()
+        self.btn_close.clicked.connect(self.reject)
+        btn_layout.addWidget(self.btn_close)
         layout.addLayout(btn_layout)
         
         self.retranslate_ui()
@@ -251,6 +251,7 @@ class SettingsDialog(QDialog):
         self.chk_associated.setText(Trans.t("enable_associated", "启用关联启动"))
         self.btn_add_app.setText(Trans.t("add_app", "添加应用"))
         self.btn_remove_app.setText(Trans.t("remove_selected", "删除选中"))
+        self.btn_close.setText(Trans.t("close", "关闭"))
 
     def eventFilter(self, obj, event):
         from PyQt6.QtWidgets import QWidget

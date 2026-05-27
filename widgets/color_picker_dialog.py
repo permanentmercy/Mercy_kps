@@ -251,9 +251,8 @@ class ColorPreview(QWidget):
         p.drawLine(half, 0, half, h)
 
         # Labels — language-aware
-        is_zh = Trans.get_language() == "zh_CN"
-        old_lbl = "旧" if is_zh else "Old"
-        new_lbl = "新" if is_zh else "New"
+        old_lbl = Trans.t("old_color", "旧")
+        new_lbl = Trans.t("new_color", "新")
         p.setPen(QColor(200, 200, 200))
         from PyQt6.QtGui import QFont
         font = QFont("Segoe UI", 8)
@@ -413,7 +412,6 @@ class ColorPickerDialog(QDialog):
         root.setSpacing(14)
 
         # Title (draggable area — cursor hint)
-        is_zh = Trans.get_language() == "zh_CN"
         self.lbl_title = QLabel(Trans.t("select_color", "选择颜色"))
         self.lbl_title.setStyleSheet(
             "font-size: 15px; font-weight: bold; color: #ffffff; "
@@ -483,8 +481,7 @@ class ColorPickerDialog(QDialog):
         root.addLayout(hex_row)
 
         # ── Preset palette ──
-        is_zh = Trans.get_language() == "zh_CN"
-        self.lbl_palette = QLabel(Trans.t("color_presets", "快捷预设" if is_zh else "Presets"))
+        self.lbl_palette = QLabel(Trans.t("color_presets", "快捷预设"))
         self.lbl_palette.setStyleSheet("color: #666; font-size: 11px;")
         root.addWidget(self.lbl_palette)
 
@@ -499,12 +496,11 @@ class ColorPickerDialog(QDialog):
         # ── OK / Cancel ──
         btn_row = QHBoxLayout()
         btn_row.addStretch()
-        is_zh = Trans.get_language() == "zh_CN"
-        btn_cancel = QPushButton(Trans.t("cancel", "取消" if is_zh else "Cancel"))
+        btn_cancel = QPushButton(Trans.t("cancel", "取消"))
         btn_cancel.setObjectName("btn_cancel")
         btn_cancel.clicked.connect(self.reject)
         btn_row.addWidget(btn_cancel)
-        btn_ok = QPushButton(Trans.t("ok", "确定" if is_zh else "OK"))
+        btn_ok = QPushButton(Trans.t("ok", "确定"))
         btn_ok.setObjectName("btn_ok")
         btn_ok.clicked.connect(self.accept)
         btn_row.addWidget(btn_ok)

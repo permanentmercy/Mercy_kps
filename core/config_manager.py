@@ -168,6 +168,7 @@ class ConfigManager:
                 "counter_offset_y": 20,
                 "text_offset_y": 0,
                 "counter": 0,
+                "counter_autofit": False,
                 "rain_color": [255, 255, 255, 160]
             }
         ]

@@ -5,10 +5,12 @@ class KeyListener:
     def __init__(self):
         self.listener = None
         self.is_running = False
+        self.pressed_keys = set()
 
     def start(self):
         if self.is_running:
             return
+        self.pressed_keys.clear()
         self.listener = keyboard.Listener(
             on_press=self.on_press,
             on_release=self.on_release
@@ -19,6 +21,7 @@ class KeyListener:
     def stop(self):
         if not self.is_running:
             return
+        self.pressed_keys.clear()
         if self.listener:
             self.listener.stop()
         self.is_running = False
@@ -26,11 +29,15 @@ class KeyListener:
     def on_press(self, key):
         key_str = self._get_key_str(key)
         if key_str:
+            if key_str in self.pressed_keys:
+                return
+            self.pressed_keys.add(key_str)
             events.key_pressed.emit(key_str)
 
     def on_release(self, key):
         key_str = self._get_key_str(key)
         if key_str:
+            self.pressed_keys.discard(key_str)
             events.key_released.emit(key_str)
 
     def _get_key_str(self, key):

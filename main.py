@@ -5,6 +5,7 @@ from PyQt6.QtCore import Qt, QTranslator, QLibraryInfo
 from core.key_listener import KeyListener
 from windows.display_window import DisplayWindow
 from windows.control_window import ControlWindow
+from core.i18n import Trans
 
 def main():
     import traceback
@@ -77,10 +78,10 @@ def main():
     tray_icon = QSystemTrayIcon(app.windowIcon(), app)
     tray_menu = QMenu()
     
-    action_show_gui = tray_menu.addAction("打开设置 (Open Settings)")
+    action_show_gui = tray_menu.addAction(Trans.t("tray_open_settings", "打开设置 (Open Settings)"))
     action_show_gui.triggered.connect(lambda: (control_win.show(), control_win.raise_(), control_win.activateWindow()))
     
-    action_exit = tray_menu.addAction("退出 (Exit)")
+    action_exit = tray_menu.addAction(Trans.t("tray_exit", "退出 (Exit)"))
     def on_exit():
         control_win._force_close = True
         display_win.close()
@@ -93,6 +94,9 @@ def main():
         control_win.show(), control_win.raise_(), control_win.activateWindow()
     ) if reason == QSystemTrayIcon.ActivationReason.DoubleClick else None)
     tray_icon.show()
+
+    control_win.action_show_gui = action_show_gui
+    control_win.action_exit = action_exit
     
     is_silent = "--silent" in sys.argv
 
@@ -137,7 +141,6 @@ def main():
         control_win.hide()
         display_win.hide()
         if not is_silent:
-            from core.i18n import Trans
             tray_icon.showMessage(
                 Trans.t("tray_running_title", "MercyKPS 关联启动"),
                 Trans.t("tray_running_desc", "程序已在后台运行以监测关联应用。双击托盘图标可打开设置界面。"),

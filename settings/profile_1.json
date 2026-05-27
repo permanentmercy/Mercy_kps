@@ -86,13 +86,14 @@
       ],
       "key_type": "normal",
       "text_offset_y": -6,
-      "counter_offset_y": 16
+      "counter_offset_y": 16,
+      "counter_autofit": true
     },
     {
       "id": "key_003",
       "key_code": "",
       "display_name": "KPS",
-      "x": 15,
+      "x": 17,
       "y": 11,
       "width": 60,
       "height": 60,
@@ -132,7 +133,8 @@
       "key_type": "kps",
       "simulate_press": true,
       "text_offset_y": -6,
-      "counter_offset_y": 16
+      "counter_offset_y": 16,
+      "counter_autofit": true
     },
     {
       "id": "key_004",
@@ -165,11 +167,11 @@
       "font_bold": true,
       "corner_radius": 10,
       "press_scale": 0.92,
-      "show_counter": false,
+      "show_counter": true,
       "counter_size": 14,
       "counter_offset_x": 0,
-      "counter_offset_y": 20,
-      "text_offset_y": 0,
+      "counter_offset_y": 16,
+      "text_offset_y": -6,
       "counter": 23,
       "rain_color": [
         255,
@@ -177,7 +179,8 @@
         255,
         160
       ],
-      "key_type": "normal"
+      "key_type": "normal",
+      "counter_autofit": true
     },
     {
       "id": "key_005",
@@ -210,11 +213,11 @@
       "font_bold": true,
       "corner_radius": 10,
       "press_scale": 0.92,
-      "show_counter": false,
+      "show_counter": true,
       "counter_size": 14,
       "counter_offset_x": 0,
-      "counter_offset_y": 20,
-      "text_offset_y": 0,
+      "counter_offset_y": 16,
+      "text_offset_y": -6,
       "counter": 23,
       "rain_color": [
         255,
@@ -222,14 +225,15 @@
         255,
         160
       ],
-      "key_type": "normal"
+      "key_type": "normal",
+      "counter_autofit": true
     },
     {
       "id": "key_006",
       "key_code": ",",
       "display_name": ",",
-      "x": 9,
-      "y": 14,
+      "x": 15,
+      "y": 11,
       "width": 60,
       "height": 60,
       "bg_color": [
@@ -255,11 +259,11 @@
       "font_bold": true,
       "corner_radius": 10,
       "press_scale": 0.92,
-      "show_counter": false,
+      "show_counter": true,
       "counter_size": 14,
       "counter_offset_x": 0,
-      "counter_offset_y": 20,
-      "text_offset_y": 0,
+      "counter_offset_y": 16,
+      "text_offset_y": -6,
       "counter": 0,
       "rain_color": [
         255,
@@ -267,7 +271,8 @@
         255,
         160
       ],
-      "key_type": "normal"
+      "key_type": "normal",
+      "counter_autofit": true
     }
   ]
 }
