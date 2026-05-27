@@ -70,6 +70,12 @@ class ConfigManager:
                     if grid_size > 0 and (k.get("x", 0) > 30 or k.get("y", 0) > 30):
                         k["x"] = int(round(k.get("x", 0) / (60 / grid_size)))
                         k["y"] = int(round(k.get("y", 0) / (60 / grid_size)))
+            else:
+                # Fix corrupted version 2 profiles that have the default key's pixel coordinates
+                for k in cls._config.get("keys", []):
+                    if grid_size > 0 and k.get("x", 0) == 50 and k.get("y", 0) == 200:
+                        k["x"] = int(round(50 / (60 / grid_size)))
+                        k["y"] = int(round(200 / (60 / grid_size)))
             
             cls._config["profile_version"] = 2
             
@@ -152,7 +158,7 @@ class ConfigManager:
                 "id": "key_001",
                 "key_code": "a",
                 "display_name": "A",
-                "x": 50, "y": 200,
+                "x": 2, "y": 7,
                 "width": 60, "height": 60,
                 "bg_color": [240, 240, 245, 60],
                 "border_color": [255, 255, 255, 255],
