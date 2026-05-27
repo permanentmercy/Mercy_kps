@@ -444,7 +444,7 @@ class KeyWidget(QWidget):
         if not parent_canvas:
             return
             
-        exclude_keys = {'id', 'key_code', 'display_name', 'nickname', 'x', 'y', 'counter'}
+        exclude_keys = {'id', 'key_code', 'display_name', 'nickname', 'x', 'y', 'counter', 'key_type', 'simulate_press'}
         import copy
         parent_canvas.format_painter_style = {k: copy.deepcopy(v) for k, v in self.cfg.items() if k not in exclude_keys}
         parent_canvas.setCursor(Qt.CursorShape.WhatsThisCursor)

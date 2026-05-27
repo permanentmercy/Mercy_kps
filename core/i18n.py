@@ -77,7 +77,9 @@ class Trans:
             "press_scale": "按压缩放:",
             "add_app": "添加应用",
             "remove_selected": "删除选中",
-            "nickname": "昵称"
+            "nickname": "昵称",
+            "rain_speed": "键雨速度:",
+            "rain_fade": "上升时渐隐"
         },
         "en_US": {
             "title": "KPS-Plus Editor",
@@ -152,7 +154,9 @@ class Trans:
             "press_scale": "Press Scale:",
             "add_app": "Add App",
             "remove_selected": "Remove Selected",
-            "nickname": "Nickname"
+            "nickname": "Nickname",
+            "rain_speed": "Rain Speed:",
+            "rain_fade": "Fade Out on Rise"
         }
     }
     

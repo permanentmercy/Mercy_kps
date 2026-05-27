@@ -116,6 +116,7 @@ class RainOverlay(QWidget):
         speed = self._rain_cfg.get("speed_up", 6)
         grow_speed = self._rain_cfg.get("grow_speed", 6)
         fade_speed = self._rain_cfg.get("fade_speed", 0.018)
+        fade_enabled = self._rain_cfg.get("fade_enabled", True)
         
         for bar in self._bars[:]:
             if bar.growing:
@@ -124,9 +125,13 @@ class RainOverlay(QWidget):
             else:
                 # Rise at constant uniform speed (no acceleration)
                 bar.bottom_y -= speed
-                bar.opacity -= fade_speed
-                if bar.opacity <= 0:
-                    self._bars.remove(bar)
+                if fade_enabled:
+                    bar.opacity -= fade_speed
+                else:
+                    bar.opacity = 1.0
+                if (fade_enabled and bar.opacity <= 0) or bar.bottom_y < 0:
+                    if bar in self._bars:
+                        self._bars.remove(bar)
                     
         if needs_update:
             self.update()

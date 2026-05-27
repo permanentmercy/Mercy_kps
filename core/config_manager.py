@@ -137,6 +137,7 @@ class ConfigManager:
                 "speed_up": 6,
                 "grow_speed": 6,
                 "fade_speed": 0.018,
+                "fade_enabled": True,
                 "color_link": True
             },
             "associated_startup_enabled": False,

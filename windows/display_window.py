@@ -59,12 +59,31 @@ class DisplayWindow(QWidget):
         mapped_win_w = int(base_w * scale_factor)
         mapped_win_h = int(base_h * scale_factor)
         
-        self.setGeometry(
-            self._cfg.get('x', 100),
-            self._cfg.get('y', 100),
-            mapped_win_w,
-            mapped_win_h
-        )
+        x = self._cfg.get('x', 100)
+        y = self._cfg.get('y', 100)
+        
+        # Check if current coordinates intersect with any connected screen
+        from PyQt6.QtGui import QGuiApplication
+        from PyQt6.QtCore import QRect
+        win_rect = QRect(x, y, mapped_win_w, mapped_win_h)
+        intersects_any = False
+        screens = QGuiApplication.screens()
+        for screen in screens:
+            if screen.geometry().intersects(win_rect):
+                intersects_any = True
+                break
+                
+        if not intersects_any and screens:
+            # Snap to first screen's geometry
+            primary_geo = screens[0].geometry()
+            x = primary_geo.x() + 100
+            y = primary_geo.y() + 100
+            self._cfg['x'] = x
+            self._cfg['y'] = y
+            self._cfg['monitor'] = 0
+            ConfigManager.save()
+            
+        self.setGeometry(x, y, mapped_win_w, mapped_win_h)
         
         self.rain_overlays = {}
         self._key_widgets = []

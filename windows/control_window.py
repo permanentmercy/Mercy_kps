@@ -302,12 +302,38 @@ class ControlWindow(QWidget):
         self.chk_listen.stateChanged.connect(self._toggle_listener)
         vbox_general.addWidget(self.chk_listen)
         
+        left_panel.addWidget(self.group_general)
+        
+        # Rain Group
+        self.group_rain = QGroupBox()
+        vbox_rain = QVBoxLayout(self.group_rain)
+        
         self.chk_rain = QCheckBox()
         self.chk_rain.setChecked(self._config.get("rain", {}).get("enabled", True))
         self.chk_rain.stateChanged.connect(self._toggle_rain)
-        vbox_general.addWidget(self.chk_rain)
+        vbox_rain.addWidget(self.chk_rain)
         
-        left_panel.addWidget(self.group_general)
+        self.lbl_rain_speed = QLabel()
+        vbox_rain.addWidget(self.lbl_rain_speed)
+        
+        hbox_rs = QHBoxLayout()
+        rain_speed_val = self._config.get("rain", {}).get("speed_up", 6)
+        self.slider_rain_speed = SmoothSlider(1, 30, rain_speed_val)
+        self.slider_rain_speed.valueChanged.connect(self._update_rain_speed_label)
+        self.slider_rain_speed.sliderReleased.connect(self._on_rain_speed_released)
+        hbox_rs.addWidget(self.slider_rain_speed)
+        self.lbl_rain_speed_val = QLabel(str(rain_speed_val))
+        self.lbl_rain_speed_val.setFixedWidth(40)
+        self.lbl_rain_speed_val.setStyleSheet("color: #a3a3a3; font-weight: bold; font-size: 13px;")
+        hbox_rs.addWidget(self.lbl_rain_speed_val)
+        vbox_rain.addLayout(hbox_rs)
+        
+        self.chk_rain_fade = QCheckBox()
+        self.chk_rain_fade.setChecked(self._config.get("rain", {}).get("fade_enabled", True))
+        self.chk_rain_fade.stateChanged.connect(self._toggle_rain_fade)
+        vbox_rain.addWidget(self.chk_rain_fade)
+        
+        left_panel.addWidget(self.group_rain)
         
         # Display Group
         self.group_display = QGroupBox()
@@ -805,6 +831,8 @@ class ControlWindow(QWidget):
         self.lbl_grid_val.setText(str(grid_val))
         
         self.chk_rain.setText(Trans.t("enable_rain"))
+        self.lbl_rain_speed.setText(Trans.t("rain_speed", "键雨速度:"))
+        self.chk_rain_fade.setText(Trans.t("rain_fade", "上升时渐隐"))
         
         self.lbl_key_code.setText(Trans.t("key_code"))
         self.lbl_nickname.setText(Trans.t("nickname", "昵称"))
@@ -1365,6 +1393,23 @@ class ControlWindow(QWidget):
         ConfigManager.save()
         events.config_changed.emit(ConfigManager.load())
 
+    def _update_rain_speed_label(self, val):
+        self.lbl_rain_speed_val.setText(str(val))
+
+    def _on_rain_speed_released(self):
+        val = self.slider_rain_speed.value()
+        rain_cfg = self._config.setdefault("rain", {})
+        rain_cfg["speed_up"] = val
+        rain_cfg["grow_speed"] = val
+        ConfigManager.save()
+        events.config_changed.emit(ConfigManager.load())
+
+    def _toggle_rain_fade(self, state):
+        enabled = (state == Qt.CheckState.Checked.value or state == 2)
+        self._config.setdefault("rain", {})["fade_enabled"] = enabled
+        ConfigManager.save()
+        events.config_changed.emit(ConfigManager.load())
+
     def _show_settings_dialog(self):
         from widgets.settings_dialog import SettingsDialog
         dialog = SettingsDialog(self, self.display_win, self)
@@ -1436,6 +1481,9 @@ class ControlWindow(QWidget):
         self.chk_listen.blockSignals(True)
         self.slider_editor_key_size.blockSignals(True)
         self.slider_key_spacing.blockSignals(True)
+        self.chk_rain.blockSignals(True)
+        self.slider_rain_speed.blockSignals(True)
+        self.chk_rain_fade.blockSignals(True)
         
         grid_val = max(1, self._config.get("display_window", {}).get("grid_size", 2))
         self.slider_grid.setValue(grid_val)
@@ -1452,11 +1500,20 @@ class ControlWindow(QWidget):
         self.chk_grid.setChecked(self._config.get("display_window", {}).get("grid_visible", True))
         self.chk_listen.setChecked(self._config.get("enable_listener", True))
         
+        self.chk_rain.setChecked(self._config.get("rain", {}).get("enabled", True))
+        rain_speed_val = self._config.get("rain", {}).get("speed_up", 6)
+        self.slider_rain_speed.setValue(rain_speed_val)
+        self.lbl_rain_speed_val.setText(str(rain_speed_val))
+        self.chk_rain_fade.setChecked(self._config.get("rain", {}).get("fade_enabled", True))
+        
         self.slider_grid.blockSignals(False)
         self.chk_grid.blockSignals(False)
         self.chk_listen.blockSignals(False)
         self.slider_editor_key_size.blockSignals(False)
         self.slider_key_spacing.blockSignals(False)
+        self.chk_rain.blockSignals(False)
+        self.slider_rain_speed.blockSignals(False)
+        self.chk_rain_fade.blockSignals(False)
         
         self.grid_canvas.reload_keys()
         self.retranslate_ui()

@@ -283,6 +283,9 @@ class SettingsDialog(QDialog):
             cfg["display_window"]["x"] = geo.x() + 100
             cfg["display_window"]["y"] = geo.y() + 100
             ConfigManager.save(cfg, save_profile=False)
+            
+            from core.events import events
+            events.config_changed.emit(cfg)
 
     def _change_language_btn(self, btn_id):
         lang = "zh_CN" if btn_id == 0 else "en_US"
