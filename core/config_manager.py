@@ -164,6 +164,8 @@ class ConfigManager:
                 "show_counter": False,
                 "counter_size": 14,
                 "counter_offset_x": 0,
+                "counter_offset_y": 20,
+                "text_offset_y": 0,
                 "counter": 0,
                 "rain_color": [255, 255, 255, 160]
             }

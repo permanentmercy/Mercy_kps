@@ -201,8 +201,8 @@ class KeyWidget(QWidget):
         from core.config_manager import ConfigManager
         global_cfg = ConfigManager.load().get("display_window", {})
         
-        toy = global_cfg.get("text_offset_y", 0)
-        coy = global_cfg.get("counter_offset_y", 20)
+        toy = self.cfg.get("text_offset_y", global_cfg.get("text_offset_y", 0))
+        coy = self.cfg.get("counter_offset_y", global_cfg.get("counter_offset_y", 20))
         
         if self.is_preview:
             toy = int(toy * self.scale_y)
@@ -249,7 +249,7 @@ class KeyWidget(QWidget):
             p.setFont(font)
             p.drawText(QRectF(cox, coy, w, h), Qt.AlignmentFlag.AlignCenter, val)
         else:
-            p.drawText(QRectF(0, 0, w, h), Qt.AlignmentFlag.AlignCenter, disp_name)
+            p.drawText(QRectF(0, toy, w, h), Qt.AlignmentFlag.AlignCenter, disp_name)
 
     # Mouse Events for dragging and context menu (Only active in preview mode)
     def mousePressEvent(self, e: QMouseEvent):

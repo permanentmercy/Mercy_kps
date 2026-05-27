@@ -35,7 +35,7 @@
       "show_counter": false,
       "counter_size": 14,
       "counter_offset_x": 0,
-      "counter": 1,
+      "counter": 3,
       "rain_color": [
         255,
         255,
@@ -74,6 +74,51 @@
       "font_bold": true,
       "corner_radius": 10,
       "press_scale": 0.92,
+      "show_counter": true,
+      "counter_size": 14,
+      "counter_offset_x": 0,
+      "counter": 0,
+      "rain_color": [
+        255,
+        255,
+        255,
+        160
+      ],
+      "key_type": "normal",
+      "text_offset_y": -6,
+      "counter_offset_y": 16
+    },
+    {
+      "id": "key_003",
+      "key_code": "",
+      "display_name": "KPS",
+      "x": 15,
+      "y": 11,
+      "width": 60,
+      "height": 60,
+      "bg_color": [
+        240,
+        240,
+        245,
+        60
+      ],
+      "border_color": [
+        255,
+        255,
+        255,
+        255
+      ],
+      "border_width": 2,
+      "text_color": [
+        255,
+        255,
+        255,
+        220
+      ],
+      "font_size": 16,
+      "font_bold": true,
+      "corner_radius": 10,
+      "press_scale": 0.92,
       "show_counter": false,
       "counter_size": 14,
       "counter_offset_x": 0,
@@ -84,7 +129,8 @@
         255,
         160
       ],
-      "key_type": "normal"
+      "key_type": "kps",
+      "simulate_press": true
     }
   ]
 }

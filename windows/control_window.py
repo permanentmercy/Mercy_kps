@@ -335,31 +335,7 @@ class ControlWindow(QWidget):
         hbox_grid.addWidget(self.lbl_grid_val)
         vbox_display.addLayout(hbox_grid)
         
-        self.lbl_global_text_offset_y = QLabel()
-        vbox_display.addWidget(self.lbl_global_text_offset_y)
-        hbox_toy = QHBoxLayout()
-        toy_val = self._config.get("display_window", {}).get("text_offset_y", 0)
-        self.slider_global_text_offset_y = SmoothSlider(-50, 50, toy_val)
-        self.slider_global_text_offset_y.valueChanged.connect(self._update_global_text_offset_y)
-        hbox_toy.addWidget(self.slider_global_text_offset_y)
-        self.lbl_global_text_offset_y_val = QLabel(str(toy_val))
-        self.lbl_global_text_offset_y_val.setFixedWidth(40)
-        self.lbl_global_text_offset_y_val.setStyleSheet("color: #a3a3a3; font-weight: bold; font-size: 13px;")
-        hbox_toy.addWidget(self.lbl_global_text_offset_y_val)
-        vbox_display.addLayout(hbox_toy)
-        
-        self.lbl_global_counter_offset_y = QLabel()
-        vbox_display.addWidget(self.lbl_global_counter_offset_y)
-        hbox_coy = QHBoxLayout()
-        coy_val = self._config.get("display_window", {}).get("counter_offset_y", 20)
-        self.slider_global_counter_offset_y = SmoothSlider(-100, 100, coy_val)
-        self.slider_global_counter_offset_y.valueChanged.connect(self._update_global_counter_offset_y)
-        hbox_coy.addWidget(self.slider_global_counter_offset_y)
-        self.lbl_global_counter_offset_y_val = QLabel(str(coy_val))
-        self.lbl_global_counter_offset_y_val.setFixedWidth(40)
-        self.lbl_global_counter_offset_y_val.setStyleSheet("color: #a3a3a3; font-weight: bold; font-size: 13px;")
-        hbox_coy.addWidget(self.lbl_global_counter_offset_y_val)
-        vbox_display.addLayout(hbox_coy)
+        # (Global vertical offsets moved to floating property panel)
         
         self.lbl_editor_key_size = QLabel()
         vbox_display.addWidget(self.lbl_editor_key_size)
@@ -630,6 +606,19 @@ class ControlWindow(QWidget):
         vbox_ts.addWidget(self.slider_text_size)
         vbox_tc.addWidget(self.widget_text_size)
 
+        # Text Offset Y field
+        self.widget_text_offset_y = QWidget()
+        vbox_toy = QVBoxLayout(self.widget_text_offset_y)
+        vbox_toy.setContentsMargins(0, 0, 0, 0)
+        vbox_toy.setSpacing(2)
+        self.lbl_text_offset_y = QLabel()
+        vbox_toy.addWidget(self.lbl_text_offset_y)
+        self.slider_text_offset_y = NonScrollSlider(Qt.Orientation.Horizontal)
+        self.slider_text_offset_y.setRange(-50, 50)
+        self.slider_text_offset_y.valueChanged.connect(self._change_key_text_offset_y)
+        vbox_toy.addWidget(self.slider_text_offset_y)
+        vbox_tc.addWidget(self.widget_text_offset_y)
+
         # Counter Size field
         self.widget_counter_size = QWidget()
         vbox_cs = QVBoxLayout(self.widget_counter_size)
@@ -655,6 +644,19 @@ class ControlWindow(QWidget):
         self.slider_counter_offset_x.valueChanged.connect(self._change_key_counter_offset_x)
         vbox_cx.addWidget(self.slider_counter_offset_x)
         vbox_tc.addWidget(self.widget_counter_offset_x)
+
+        # Counter Offset Y field
+        self.widget_counter_offset_y = QWidget()
+        vbox_coy = QVBoxLayout(self.widget_counter_offset_y)
+        vbox_coy.setContentsMargins(0, 0, 0, 0)
+        vbox_coy.setSpacing(2)
+        self.lbl_counter_offset_y = QLabel()
+        vbox_coy.addWidget(self.lbl_counter_offset_y)
+        self.slider_counter_offset_y = NonScrollSlider(Qt.Orientation.Horizontal)
+        self.slider_counter_offset_y.setRange(-100, 100)
+        self.slider_counter_offset_y.valueChanged.connect(self._change_key_counter_offset_y)
+        vbox_coy.addWidget(self.slider_counter_offset_y)
+        vbox_tc.addWidget(self.widget_counter_offset_y)
 
         # Text Bold checkbox
         self.chk_text_bold = QCheckBox()
@@ -832,8 +834,10 @@ class ControlWindow(QWidget):
                     bw = k.get("border_width", 2)
                     cr = k.get("corner_radius", 10)
                     ts = k.get("font_size", 16)
+                    toy = k.get("text_offset_y", 0)
                     cs = k.get("counter_size", 14)
                     cox = k.get("counter_offset_x", 0)
+                    coy = k.get("counter_offset_y", 20)
                     roy = k.get("rain_offset_y", 0)
                     rt = k.get("rain_thickness", 0)
                     dw_val = k.get("display_width", k.get("width", 60))
@@ -843,8 +847,10 @@ class ControlWindow(QWidget):
                     self.lbl_border_width.setText(f"{Trans.t('border_width')} {bw}px")
                     self.lbl_corner_radius.setText(f"{Trans.t('corner_radius')} {cr}px")
                     self.lbl_text_size.setText(f"{Trans.t('text_size')} {ts}pt")
+                    self.lbl_text_offset_y.setText(f"{Trans.t('text_offset_y')} {toy}px")
                     self.lbl_counter_size.setText(f"{Trans.t('counter_size')} {cs}pt")
                     self.lbl_counter_offset_x.setText(f"{Trans.t('counter_offset_x')} {cox}px")
+                    self.lbl_counter_offset_y.setText(f"{Trans.t('counter_offset_y')} {coy}px")
                     self.lbl_rain_offset_y.setText(f"{Trans.t('rain_offset_y')} {roy}px")
                     self.lbl_rain_thickness.setText(f"{Trans.t('rain_thickness')} {rt}px")
                     self.lbl_display_width.setText(f"{Trans.t('display_width')} {dw_val}px")
@@ -856,8 +862,10 @@ class ControlWindow(QWidget):
             self.lbl_border_width.setText(Trans.t("border_width"))
             self.lbl_corner_radius.setText(Trans.t("corner_radius"))
             self.lbl_text_size.setText(Trans.t("text_size"))
+            self.lbl_text_offset_y.setText(Trans.t("text_offset_y"))
             self.lbl_counter_size.setText(Trans.t("counter_size"))
             self.lbl_counter_offset_x.setText(Trans.t("counter_offset_x"))
+            self.lbl_counter_offset_y.setText(Trans.t("counter_offset_y"))
             self.lbl_rain_offset_y.setText(Trans.t("rain_offset_y"))
             self.lbl_rain_thickness.setText(Trans.t("rain_thickness"))
             self.lbl_display_width.setText(Trans.t("display_width"))
@@ -865,8 +873,6 @@ class ControlWindow(QWidget):
             self.lbl_key_layer.setText(Trans.t("key_layer"))
             self.lbl_rain_layer.setText(Trans.t("rain_layer"))
             
-        self.lbl_global_text_offset_y.setText(Trans.t("text_offset_y"))
-        self.lbl_global_counter_offset_y.setText(Trans.t("counter_offset_y"))
         self.lbl_editor_key_size.setText(Trans.t("editor_key_size"))
         self.lbl_key_spacing.setText(Trans.t("key_spacing"))
 
@@ -944,6 +950,12 @@ class ControlWindow(QWidget):
                 self.slider_text_size.blockSignals(False)
                 self.lbl_text_size.setText(f"{Trans.t('text_size')} {ts}pt")
 
+                toy = k.get("text_offset_y", 0)
+                self.slider_text_offset_y.blockSignals(True)
+                self.slider_text_offset_y.setValue(toy)
+                self.slider_text_offset_y.blockSignals(False)
+                self.lbl_text_offset_y.setText(f"{Trans.t('text_offset_y')} {toy}px")
+
                 self.chk_text_bold.blockSignals(True)
                 self.chk_text_bold.setChecked(k.get("font_bold", True))
                 self.chk_text_bold.blockSignals(False)
@@ -967,6 +979,12 @@ class ControlWindow(QWidget):
                 self.slider_counter_offset_x.setValue(cox)
                 self.slider_counter_offset_x.blockSignals(False)
                 self.lbl_counter_offset_x.setText(f"{Trans.t('counter_offset_x')} {cox}px")
+
+                coy = k.get("counter_offset_y", 20)
+                self.slider_counter_offset_y.blockSignals(True)
+                self.slider_counter_offset_y.setValue(coy)
+                self.slider_counter_offset_y.blockSignals(False)
+                self.lbl_counter_offset_y.setText(f"{Trans.t('counter_offset_y')} {coy}px")
 
                 roy = k.get("rain_offset_y", 0)
                 self.slider_rain_offset_y.blockSignals(True)
@@ -1236,19 +1254,27 @@ class ControlWindow(QWidget):
                 events.config_changed.emit(ConfigManager.load())
                 break
 
-    def _update_global_text_offset_y(self, val):
-        self._config.setdefault("display_window", {})["text_offset_y"] = val
-        self.lbl_global_text_offset_y_val.setText(str(val))
-        ConfigManager.save()
-        self.grid_canvas.reload_keys()
-        events.config_changed.emit(ConfigManager.load())
+    def _change_key_text_offset_y(self, val):
+        if not self._current_edit_key_id: return
+        for k in self._config.get("keys", []):
+            if k.get("id") == self._current_edit_key_id:
+                k["text_offset_y"] = val
+                self.lbl_text_offset_y.setText(f"{Trans.t('text_offset_y')} {val}px")
+                ConfigManager.save()
+                self.grid_canvas.reload_keys()
+                events.config_changed.emit(ConfigManager.load())
+                break
 
-    def _update_global_counter_offset_y(self, val):
-        self._config.setdefault("display_window", {})["counter_offset_y"] = val
-        self.lbl_global_counter_offset_y_val.setText(str(val))
-        ConfigManager.save()
-        self.grid_canvas.reload_keys()
-        events.config_changed.emit(ConfigManager.load())
+    def _change_key_counter_offset_y(self, val):
+        if not self._current_edit_key_id: return
+        for k in self._config.get("keys", []):
+            if k.get("id") == self._current_edit_key_id:
+                k["counter_offset_y"] = val
+                self.lbl_counter_offset_y.setText(f"{Trans.t('counter_offset_y')} {val}px")
+                ConfigManager.save()
+                self.grid_canvas.reload_keys()
+                events.config_changed.emit(ConfigManager.load())
+                break
     def _update_editor_key_size_label(self, val):
         self.lbl_editor_key_size_val.setText(str(val))
 
@@ -1408,22 +1434,12 @@ class ControlWindow(QWidget):
         self.slider_grid.blockSignals(True)
         self.chk_grid.blockSignals(True)
         self.chk_listen.blockSignals(True)
-        self.slider_global_text_offset_y.blockSignals(True)
-        self.slider_global_counter_offset_y.blockSignals(True)
         self.slider_editor_key_size.blockSignals(True)
         self.slider_key_spacing.blockSignals(True)
         
         grid_val = max(1, self._config.get("display_window", {}).get("grid_size", 2))
         self.slider_grid.setValue(grid_val)
         self.lbl_grid_val.setText(str(grid_val))
-        
-        toy_val = self._config.get("display_window", {}).get("text_offset_y", 0)
-        self.slider_global_text_offset_y.setValue(toy_val)
-        self.lbl_global_text_offset_y_val.setText(str(toy_val))
-        
-        coy_val = self._config.get("display_window", {}).get("counter_offset_y", 20)
-        self.slider_global_counter_offset_y.setValue(coy_val)
-        self.lbl_global_counter_offset_y_val.setText(str(coy_val))
         
         eks_val = self._config.get("display_window", {}).get("editor_key_size", 60)
         self.slider_editor_key_size.setValue(eks_val)
@@ -1439,8 +1455,6 @@ class ControlWindow(QWidget):
         self.slider_grid.blockSignals(False)
         self.chk_grid.blockSignals(False)
         self.chk_listen.blockSignals(False)
-        self.slider_global_text_offset_y.blockSignals(False)
-        self.slider_global_counter_offset_y.blockSignals(False)
         self.slider_editor_key_size.blockSignals(False)
         self.slider_key_spacing.blockSignals(False)
         
