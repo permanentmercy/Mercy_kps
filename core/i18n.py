@@ -1,0 +1,184 @@
+class Trans:
+    LANGUAGES = ["zh_CN", "en_US"]
+    
+    _current_lang = "zh_CN"
+    
+    _dict = {
+        "zh_CN": {
+            "title": "KPS-Plus 编辑器",
+            "general_settings": "常规设置",
+            "settings": "设置",
+            "enable_listener": "启用按键监听",
+            "select_monitor": "选择显示器:",
+            "display_settings": "显示设置",
+            "show_grid": "在编辑器显示网格",
+            "grid_size": "网格大小",
+            "editor_key_size": "编辑器按键大小:",
+            "rain_settings": "键雨效果设置",
+            "enable_rain": "启用键雨",
+            "key_properties": "按键属性",
+            "key_code": "触发键码:",
+            "bg_color": "背景颜色:",
+            "key_layer": "按键图层:",
+            "rain_layer": "键雨图层:",
+            "delete_key": "删除按键",
+            "add_key": "添加新按键",
+            "canvas_title": "<b>布局画布</b> (拖动按键进行布局，右键进行编辑)",
+            "edit_hint": "在网格中右键按键以编辑属性",
+            "editing_title": "正在编辑: ",
+            "bind": "绑定",
+            "listening": "...",
+            "edit_key": "编辑此按键",
+            "language": "语言 / Language",
+            "rain_color": "键雨颜色:",
+            "apply_profile_menu": "应用此配置",
+            "rename_profile_menu": "重命名",
+            "delete_profile_menu": "删除此配置",
+            "create_profile_menu": "创建新默认模板",
+            "select_color": "选择颜色",
+            "create_profile_item": "＋ 创建新默认模板",
+            "current_profile_tooltip": "当前使用的配置文件",
+            "close": "关闭",
+            "border_color": "边框颜色:",
+            "border_width": "边框粗细:",
+            "corner_radius": "圆角大小:",
+            "text_color": "文字颜色:",
+            "text_size": "文字大小:",
+            "text_bold": "文字加粗",
+            "text_offset_y": "文字垂直偏移:",
+            "free_layout": "无吸附",
+            "show_counter": "显示按压次数",
+            "counter_size": "次数文字大小:",
+            "counter_offset_x": "次数水平偏移:",
+            "counter_offset_y": "次数垂直偏移:",
+            "format_painter": "格式刷",
+            "key_spacing": "按键间距微调:",
+            "rain_offset_y": "键雨垂直偏移:",
+            "rain_thickness": "键雨粗细微调:",
+            "display_width": "显示宽度:",
+            "display_height": "显示高度:",
+            "associated_startup": "关联启动",
+            "enable_associated": "启用关联启动",
+            "select_app_path": "目标应用路径:",
+            "browse": "浏览...",
+            "select_exe_title": "选择关联启动程序",
+            "tray_running_title": "MercyKPS 关联启动",
+            "tray_running_desc": "程序已在后台运行以监测关联应用。双击托盘图标可打开设置界面。",
+            "enable_autostart": "开机自启",
+            "select_profile": "选择配置文件",
+            "colors_group": "颜色",
+            "bg_color_short": "背景",
+            "rain_color_short": "键雨",
+            "border_color_short": "边框",
+            "text_color_short": "文字",
+            "cancel": "取消",
+            "ok": "确定",
+            "color_presets": "快捷预设",
+            "press_scale": "按压缩放:",
+            "add_app": "添加应用",
+            "remove_selected": "删除选中",
+            "nickname": "昵称"
+        },
+        "en_US": {
+            "title": "KPS-Plus Editor",
+            "general_settings": "General Settings",
+            "settings": "Settings",
+            "enable_listener": "Enable Keyboard Listener",
+            "select_monitor": "Select Monitor:",
+            "display_settings": "Display Settings",
+            "show_grid": "Show Grid in Editor",
+            "grid_size": "Grid Size (Snapping):",
+            "editor_key_size": "Editor Key Size:",
+            "rain_settings": "Rain Effect Settings",
+            "enable_rain": "Enable Rain Effect",
+            "key_properties": "Key Properties",
+            "key_code": "Key Code:",
+            "bg_color": "Background Color:",
+            "key_layer": "Key Layer:",
+            "rain_layer": "Rain Layer:",
+            "delete_key": "Delete Key",
+            "add_key": "Add New Key",
+            "canvas_title": "<b>Layout Editor Canvas</b> (Drag keys here, right-click to edit)",
+            "edit_hint": "Right-click a key in grid to edit.",
+            "editing_title": "Editing: ",
+            "bind": "Bind",
+            "listening": "...",
+            "edit_key": "Edit Key",
+            "language": "Language / 语言",
+            "rain_color": "Rain Color:",
+            "apply_profile_menu": "Apply Profile",
+            "rename_profile_menu": "Rename",
+            "delete_profile_menu": "Delete Profile",
+            "create_profile_menu": "Create New Default Profile",
+            "select_color": "Select Color",
+            "create_profile_item": "＋ Create New Default Profile",
+            "current_profile_tooltip": "Current Active Profile",
+            "close": "Close",
+            "border_color": "Border Color:",
+            "border_width": "Border Width:",
+            "corner_radius": "Corner Radius:",
+            "text_color": "Text Color:",
+            "text_size": "Text Size:",
+            "text_bold": "Bold Text",
+            "text_offset_y": "Text Offset Y:",
+            "free_layout": "Free",
+            "show_counter": "Show Press Counter",
+            "counter_size": "Counter Size:",
+            "counter_offset_x": "Counter Offset X:",
+            "counter_offset_y": "Counter Offset Y:",
+            "format_painter": "Format Painter",
+            "key_spacing": "Key Spacing Adjust:",
+            "rain_offset_y": "Rain Offset Y:",
+            "rain_thickness": "Rain Thickness Adjust:",
+            "display_width": "Display Width:",
+            "display_height": "Display Height:",
+            "associated_startup": "Associated Startup",
+            "enable_associated": "Enable Associated Startup",
+            "select_app_path": "Target App Path:",
+            "browse": "Browse...",
+            "select_exe_title": "Select Associated Application",
+            "tray_running_title": "MercyKPS Associated Startup",
+            "tray_running_desc": "KPS is running silently in the background. Double click the tray icon to open settings.",
+            "enable_autostart": "Start on Boot",
+            "select_profile": "Select Profile",
+            "colors_group": "Colors",
+            "bg_color_short": "BG",
+            "rain_color_short": "Rain",
+            "border_color_short": "Border",
+            "text_color_short": "Text",
+            "cancel": "Cancel",
+            "ok": "OK",
+            "color_presets": "Presets",
+            "press_scale": "Press Scale:",
+            "add_app": "Add App",
+            "remove_selected": "Remove Selected",
+            "nickname": "Nickname"
+        }
+    }
+    
+    @classmethod
+    def set_language(cls, lang):
+        if lang in cls.LANGUAGES:
+            cls._current_lang = lang
+            
+            # Dynamically load/unload Qt translations for standard dialogs (like QColorDialog)
+            from PyQt6.QtWidgets import QApplication
+            from PyQt6.QtCore import QTranslator, QLibraryInfo
+            app = QApplication.instance()
+            if app:
+                if hasattr(cls, "_qt_translator"):
+                    app.removeTranslator(cls._qt_translator)
+                
+                if lang == "zh_CN":
+                    cls._qt_translator = QTranslator()
+                    qt_translations_path = QLibraryInfo.path(QLibraryInfo.LibraryPath.TranslationsPath)
+                    if cls._qt_translator.load("qtbase_zh_CN", qt_translations_path):
+                        app.installTranslator(cls._qt_translator)
+
+    @classmethod
+    def get_language(cls):
+        return cls._current_lang
+
+    @classmethod
+    def t(cls, key, default=""):
+        return cls._dict[cls._current_lang].get(key, default)

@@ -1,0 +1,87 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+#  Usually these files are written by a python script, the folder containing the object
+#  files and an intermediate log file. By default, this is the temporary directory,
+#  but it can be changed.
+#  Additionally, the PyInstaller code may be compiled to a shared library
+#  or an executable.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / Coverage reports
+htmlcov/
+.tox/
+.nosenv/
+.gcov
+.lcov
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.stats
+.dmypy.json
+dmypy.json
+.profile
+.coveragerc
+.pytest_cache/
+.mypy_cache/
+.hypothesis/
+.run/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+conda/
+miniconda/
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+.project
+.pydevproject
+.settings/
+
+# OS-specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# Project specific local files
+setting.json
+crash.txt
+*.log
