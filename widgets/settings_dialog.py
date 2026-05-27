@@ -60,17 +60,16 @@ class SettingsDialog(QDialog):
             }
             QPushButton:hover {
                 background-color: #252525;
-                border-color: #6c63ff;
+                border-color: #ffffff;
                 color: #ffffff;
             }
             QPushButton:pressed {
                 background-color: #111111;
             }
             QPushButton:checked {
-                background-color: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-                    stop:0 #6c63ff, stop:1 #9b8fff);
-                border-color: #6c63ff;
-                color: #ffffff;
+                background-color: #ffffff;
+                border-color: #ffffff;
+                color: #121212;
                 font-weight: bold;
             }
             QCheckBox {
@@ -199,8 +198,8 @@ class SettingsDialog(QDialog):
                 background-color: #222222;
             }
             QListWidget::item:selected {
-                background-color: #6c63ff;
-                color: #ffffff;
+                background-color: #ffffff;
+                color: #000000;
             }
         """)
         vbox_associated.addWidget(self.list_apps)

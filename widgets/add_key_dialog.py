@@ -37,7 +37,7 @@ class AddKeyDialog(QDialog):
             }
             QPushButton:hover {
                 background-color: #2a2a2a;
-                border-color: #6c63ff;
+                border-color: #ffffff;
                 color: #ffffff;
             }
             QPushButton:pressed {

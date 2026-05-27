@@ -309,15 +309,16 @@ QLineEdit {
     font-family: monospace;
 }
 QPushButton#btn_ok {
-    background-color: #6c63ff;
+    background-color: #ffffff;
     border: none;
     border-radius: 6px;
-    color: #ffffff;
+    color: #141414;
     padding: 7px 20px;
     font-size: 13px;
     font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+    font-weight: bold;
 }
-QPushButton#btn_ok:hover { background-color: #7c74ff; }
+QPushButton#btn_ok:hover { background-color: #e5e5e5; }
 QPushButton#btn_cancel {
     background-color: #1e1e1e;
     border: 1px solid #333333;
