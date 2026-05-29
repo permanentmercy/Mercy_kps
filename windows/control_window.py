@@ -827,10 +827,12 @@ class ControlWindow(QWidget):
                 border: 1px solid #333;
             }
         """)
+        self.combo_viz_source.setMaximumWidth(240)
         self.combo_viz_source.currentIndexChanged.connect(self._change_viz_source)
         _vs_row.addWidget(self.combo_viz_source, 1)
         vbox_viz.addWidget(self.widget_viz_source)
         self._populate_viz_source_combo()
+
 
 
 
