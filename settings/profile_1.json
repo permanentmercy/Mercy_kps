@@ -5,8 +5,8 @@
       "id": "key_002",
       "key_code": "b",
       "display_name": "B",
-      "x": 13,
-      "y": 11,
+      "x": 40,
+      "y": 24,
       "width": 60,
       "height": 60,
       "bg_color": [
@@ -35,7 +35,7 @@
       "show_counter": true,
       "counter_size": 14,
       "counter_offset_x": 0,
-      "counter": 23,
+      "counter": 175,
       "rain_color": [
         255,
         255,
@@ -51,8 +51,8 @@
       "id": "key_003",
       "key_code": "",
       "display_name": "KPS",
-      "x": 17,
-      "y": 11,
+      "x": 52,
+      "y": 24,
       "width": 60,
       "height": 60,
       "bg_color": [
@@ -98,8 +98,8 @@
       "id": "key_004",
       "key_code": "f",
       "display_name": "F",
-      "x": 11,
-      "y": 11,
+      "x": 34,
+      "y": 24,
       "width": 60,
       "height": 60,
       "bg_color": [
@@ -130,7 +130,7 @@
       "counter_offset_x": 0,
       "counter_offset_y": 16,
       "text_offset_y": -6,
-      "counter": 23,
+      "counter": 117,
       "rain_color": [
         255,
         255,
@@ -144,8 +144,8 @@
       "id": "key_005",
       "key_code": "d",
       "display_name": "D",
-      "x": 9,
-      "y": 11,
+      "x": 28,
+      "y": 24,
       "width": 60,
       "height": 60,
       "bg_color": [
@@ -176,7 +176,7 @@
       "counter_offset_x": 0,
       "counter_offset_y": 16,
       "text_offset_y": -6,
-      "counter": 23,
+      "counter": 112,
       "rain_color": [
         255,
         255,
@@ -190,8 +190,8 @@
       "id": "key_006",
       "key_code": ",",
       "display_name": ",",
-      "x": 15,
-      "y": 11,
+      "x": 46,
+      "y": 24,
       "width": 60,
       "height": 60,
       "bg_color": [
@@ -222,7 +222,7 @@
       "counter_offset_x": 0,
       "counter_offset_y": 16,
       "text_offset_y": -6,
-      "counter": 0,
+      "counter": 174,
       "rain_color": [
         255,
         255,
@@ -231,6 +231,74 @@
       ],
       "key_type": "normal",
       "counter_autofit": true
+    },
+    {
+      "id": "key_001",
+      "key_code": "",
+      "display_name": "VIZ",
+      "x": 27,
+      "y": 28,
+      "width": 60,
+      "height": 60,
+      "bg_color": [
+        240,
+        240,
+        245,
+        0
+      ],
+      "border_color": [
+        255,
+        255,
+        255,
+        0
+      ],
+      "border_width": 2,
+      "text_color": [
+        255,
+        255,
+        255,
+        0
+      ],
+      "font_size": 16,
+      "font_bold": true,
+      "corner_radius": 10,
+      "press_scale": 0.92,
+      "show_counter": false,
+      "counter_size": 14,
+      "counter_offset_x": 0,
+      "counter_offset_y": 20,
+      "text_offset_y": 0,
+      "counter": 0,
+      "counter_autofit": false,
+      "rain_color": [
+        255,
+        255,
+        255,
+        160
+      ],
+      "key_type": "kps_visualizer",
+      "viz_bar_count": 16,
+      "viz_max_height": 100,
+      "viz_color_start": [
+        108,
+        99,
+        255,
+        220
+      ],
+      "viz_color_end": [
+        255,
+        80,
+        120,
+        220
+      ],
+      "viz_bar_gap": 2,
+      "viz_smoothing": 60,
+      "viz_mirror": false,
+      "viz_show_name": false,
+      "viz_source": "audio",
+      "key_layer": 0,
+      "display_width": 300,
+      "viz_device_name": "24G2W1G3- (NVIDIA High Definition Audio) [Loopback]"
     }
   ]
 }

@@ -773,12 +773,136 @@ class ControlWindow(QWidget):
         vbox_lay.addWidget(self.widget_rain_layer)
         
         vbox_editor.addWidget(self.group_layers)
+
+        # 7. Visualizer Group
+        self.group_visualizer = QGroupBox()
+        vbox_viz = QVBoxLayout(self.group_visualizer)
+        vbox_viz.setContentsMargins(10, 12, 10, 10)
+        vbox_viz.setSpacing(8)
+
+        # Color rows for visualizer
+        def _make_viz_color_row(label_attr, btn_attr, signal_slot):
+            row = QWidget()
+            row.setStyleSheet("background: transparent;")
+            hbox = QHBoxLayout(row)
+            hbox.setContentsMargins(0, 0, 0, 0)
+            hbox.setSpacing(8)
+            lbl = QLabel()
+            lbl.setFixedWidth(52)
+            lbl.setStyleSheet("color: #888; font-size: 11px; background: transparent;")
+            setattr(self, label_attr, lbl)
+            hbox.addWidget(lbl)
+            from widgets.color_button import ColorButton
+            btn = ColorButton()
+            btn.colorChanged.connect(signal_slot)
+            setattr(self, btn_attr, btn)
+            hbox.addWidget(btn, 1)
+            return row
+
+        # Data Source selector (KPS / System Audio)
+        self.widget_viz_source = QWidget()
+        self.widget_viz_source.setStyleSheet("background: transparent;")
+        _vs_row = QHBoxLayout(self.widget_viz_source)
+        _vs_row.setContentsMargins(0, 0, 0, 0)
+        _vs_row.setSpacing(8)
+        self.lbl_viz_source = QLabel()
+        self.lbl_viz_source.setFixedWidth(52)
+        self.lbl_viz_source.setStyleSheet("color: #888; font-size: 11px; background: transparent;")
+        _vs_row.addWidget(self.lbl_viz_source)
+        self.combo_viz_source = QComboBox()
+        self.combo_viz_source.setStyleSheet("""
+            QComboBox {
+                background-color: #1e1e1e;
+                border: 1px solid #333;
+                border-radius: 5px;
+                color: #ddd;
+                padding: 3px 8px;
+                font-size: 12px;
+            }
+            QComboBox::drop-down { border: none; }
+            QComboBox QAbstractItemView {
+                background-color: #1e1e1e;
+                color: #ddd;
+                selection-background-color: #2a2a2a;
+                border: 1px solid #333;
+            }
+        """)
+        self.combo_viz_source.currentIndexChanged.connect(self._change_viz_source)
+        _vs_row.addWidget(self.combo_viz_source, 1)
+        vbox_viz.addWidget(self.widget_viz_source)
+        self._populate_viz_source_combo()
+
+
+
+        vbox_viz.addWidget(_make_viz_color_row('lbl_viz_color_start', 'btn_viz_color_start', self._change_viz_color_start))
+        vbox_viz.addWidget(_make_viz_color_row('lbl_viz_color_end',   'btn_viz_color_end',   self._change_viz_color_end))
+
+        # Bar Count
+        self.widget_viz_bar_count = QWidget()
+        _vbc = QVBoxLayout(self.widget_viz_bar_count)
+        _vbc.setContentsMargins(0, 0, 0, 0); _vbc.setSpacing(2)
+        self.lbl_viz_bar_count = QLabel()
+        _vbc.addWidget(self.lbl_viz_bar_count)
+        self.slider_viz_bar_count = NonScrollSlider(Qt.Orientation.Horizontal)
+        self.slider_viz_bar_count.setRange(4, 64)
+        self.slider_viz_bar_count.valueChanged.connect(self._change_viz_bar_count)
+        _vbc.addWidget(self.slider_viz_bar_count)
+        vbox_viz.addWidget(self.widget_viz_bar_count)
+
+        # Max Height
+        self.widget_viz_max_height = QWidget()
+        _vmh = QVBoxLayout(self.widget_viz_max_height)
+        _vmh.setContentsMargins(0, 0, 0, 0); _vmh.setSpacing(2)
+        self.lbl_viz_max_height = QLabel()
+        _vmh.addWidget(self.lbl_viz_max_height)
+        self.slider_viz_max_height = NonScrollSlider(Qt.Orientation.Horizontal)
+        self.slider_viz_max_height.setRange(10, 100)
+        self.slider_viz_max_height.valueChanged.connect(self._change_viz_max_height)
+        _vmh.addWidget(self.slider_viz_max_height)
+        vbox_viz.addWidget(self.widget_viz_max_height)
+
+        # Bar Gap
+        self.widget_viz_bar_gap = QWidget()
+        _vbg = QVBoxLayout(self.widget_viz_bar_gap)
+        _vbg.setContentsMargins(0, 0, 0, 0); _vbg.setSpacing(2)
+        self.lbl_viz_bar_gap = QLabel()
+        _vbg.addWidget(self.lbl_viz_bar_gap)
+        self.slider_viz_bar_gap = NonScrollSlider(Qt.Orientation.Horizontal)
+        self.slider_viz_bar_gap.setRange(0, 8)
+        self.slider_viz_bar_gap.valueChanged.connect(self._change_viz_bar_gap)
+        _vbg.addWidget(self.slider_viz_bar_gap)
+        vbox_viz.addWidget(self.widget_viz_bar_gap)
+
+        # Smoothing
+        self.widget_viz_smoothing = QWidget()
+        _vs = QVBoxLayout(self.widget_viz_smoothing)
+        _vs.setContentsMargins(0, 0, 0, 0); _vs.setSpacing(2)
+        self.lbl_viz_smoothing = QLabel()
+        _vs.addWidget(self.lbl_viz_smoothing)
+        self.slider_viz_smoothing = NonScrollSlider(Qt.Orientation.Horizontal)
+        self.slider_viz_smoothing.setRange(0, 95)
+        self.slider_viz_smoothing.valueChanged.connect(self._change_viz_smoothing)
+        _vs.addWidget(self.slider_viz_smoothing)
+        vbox_viz.addWidget(self.widget_viz_smoothing)
+
+        # Mirror checkbox
+        self.chk_viz_mirror = QCheckBox()
+        self.chk_viz_mirror.stateChanged.connect(self._change_viz_mirror)
+        vbox_viz.addWidget(self.chk_viz_mirror)
+
+        # Show name checkbox
+        self.chk_viz_show_name = QCheckBox()
+        self.chk_viz_show_name.stateChanged.connect(self._change_viz_show_name)
+        vbox_viz.addWidget(self.chk_viz_show_name)
+
+        vbox_editor.addWidget(self.group_visualizer)
         
         # Delete Key button
         self.btn_delete_key = QPushButton()
         self.btn_delete_key.setObjectName("btn_delete")
         self.btn_delete_key.clicked.connect(self._delete_current_key)
         vbox_editor.addWidget(self.btn_delete_key)
+
         
         scroll.setWidget(scroll_content)
         main_vbox.addWidget(scroll)
@@ -786,8 +910,10 @@ class ControlWindow(QWidget):
         # Initial state
         self.floating_panel.setFixedWidth(360)
         self.floating_panel.setFixedHeight(440)
+        self.group_visualizer.hide()
         
         self.floating_panel.hide()
+
 
     def resizeEvent(self, e):
         super().resizeEvent(e)
@@ -848,11 +974,14 @@ class ControlWindow(QWidget):
         self.group_text_counter.setTitle(Trans.t("group_text_counter", "文字与计数"))
         self.group_rain_effect.setTitle(Trans.t("group_rain_effect", "键雨效果"))
         self.group_layers.setTitle(Trans.t("group_layers", "图层层级"))
+        self.group_visualizer.setTitle(Trans.t("group_visualizer", "可视化均衡器"))
         
         self.lbl_bg_color.setText(Trans.t("bg_color_short", "背景"))
         self.lbl_rain_color.setText(Trans.t("rain_color_short", "键雨"))
         self.lbl_border_color.setText(Trans.t("border_color_short", "边框"))
         self.lbl_text_color.setText(Trans.t("text_color_short", "文字"))
+        self.lbl_viz_color_start.setText(Trans.t("viz_color_start", "低频色"))
+        self.lbl_viz_color_end.setText(Trans.t("viz_color_end", "高频色"))
         self.chk_text_bold.setText(Trans.t("text_bold"))
         self.btn_delete_key.setText(Trans.t("delete_key"))
         self.btn_add_key.setText(Trans.t("add_key"))
@@ -861,7 +990,19 @@ class ControlWindow(QWidget):
         self.chk_show_counter.setText(Trans.t("show_counter", "显示按压次数"))
         self.chk_counter_autofit.setText(Trans.t("counter_autofit", "次数自适应大小"))
         self.chk_simulate_press.setText(Trans.t("simulate_press_effect", "更新时模拟按下效果"))
+        self.chk_viz_mirror.setText(Trans.t("viz_mirror", "镜像对称显示"))
+        self.chk_viz_show_name.setText(Trans.t("viz_show_name", "显示键名文字"))
+        self.lbl_viz_bar_count.setText(Trans.t("viz_bar_count", "柱数量 (离散程度):"))
+        self.lbl_viz_max_height.setText(Trans.t("viz_max_height", "最大高度 (%):"))
+        self.lbl_viz_bar_gap.setText(Trans.t("viz_bar_gap", "柱间距:"))
+        self.lbl_viz_smoothing.setText(Trans.t("viz_smoothing", "平滑度 (%):"))
+        self.lbl_viz_source.setText(Trans.t("viz_source", "数据来源:"))
+        if self.combo_viz_source.count() > 0:
+            self.combo_viz_source.setItemText(0, Trans.t("viz_source_kps", "KPS 点击数据"))
+
         
+
+
         if self._current_edit_key_id:
             for k in self._config.get("keys", []):
                 if k.get("id") == self._current_edit_key_id:
@@ -937,8 +1078,19 @@ class ControlWindow(QWidget):
                     self.group_rain_effect.show()
                     self.chk_show_counter.show()
                     self.chk_simulate_press.hide()
+                    self.group_visualizer.hide()
                     if hasattr(self, 'widget_rain_layer'):
                         self.widget_rain_layer.show()
+                elif key_type == "kps_visualizer":
+                    self.widget_key_code.hide()
+                    self.widget_nickname.show()
+                    self.widget_rain_color.hide()
+                    self.group_rain_effect.hide()
+                    self.chk_show_counter.hide()
+                    self.chk_simulate_press.hide()
+                    self.group_visualizer.show()
+                    if hasattr(self, 'widget_rain_layer'):
+                        self.widget_rain_layer.hide()
                 else:
                     self.widget_key_code.hide()
                     self.widget_nickname.show()
@@ -946,6 +1098,7 @@ class ControlWindow(QWidget):
                     self.group_rain_effect.hide()
                     self.chk_show_counter.hide()
                     self.chk_simulate_press.show()
+                    self.group_visualizer.hide()
                     if hasattr(self, 'widget_rain_layer'):
                         self.widget_rain_layer.hide()
                 
@@ -1065,12 +1218,71 @@ class ControlWindow(QWidget):
                 self.slider_rain_layer.blockSignals(False)
                 self.lbl_rain_layer.setText(f"{Trans.t('rain_layer')} {rl_val}")
                 
+                # Load visualizer values if applicable
+                if key_type == 'kps_visualizer':
+                    self.btn_viz_color_start._color = k.get('viz_color_start', [108, 99, 255, 220])
+                    self.btn_viz_color_start.update()
+                    self.btn_viz_color_end._color = k.get('viz_color_end', [255, 80, 120, 220])
+                    self.btn_viz_color_end.update()
+
+                    vbc = k.get('viz_bar_count', 16)
+                    self.slider_viz_bar_count.blockSignals(True)
+                    self.slider_viz_bar_count.setValue(vbc)
+                    self.slider_viz_bar_count.blockSignals(False)
+                    self.lbl_viz_bar_count.setText(f"{Trans.t('viz_bar_count')} {vbc}")
+
+                    vmh = k.get('viz_max_height', 80)
+                    self.slider_viz_max_height.blockSignals(True)
+                    self.slider_viz_max_height.setValue(vmh)
+                    self.slider_viz_max_height.blockSignals(False)
+                    self.lbl_viz_max_height.setText(f"{Trans.t('viz_max_height')} {vmh}%")
+
+                    vbg = k.get('viz_bar_gap', 2)
+                    self.slider_viz_bar_gap.blockSignals(True)
+                    self.slider_viz_bar_gap.setValue(vbg)
+                    self.slider_viz_bar_gap.blockSignals(False)
+                    self.lbl_viz_bar_gap.setText(f"{Trans.t('viz_bar_gap')} {vbg}px")
+
+                    vs = k.get('viz_smoothing', 60)
+                    self.slider_viz_smoothing.blockSignals(True)
+                    self.slider_viz_smoothing.setValue(vs)
+                    self.slider_viz_smoothing.blockSignals(False)
+                    self.lbl_viz_smoothing.setText(f"{Trans.t('viz_smoothing')} {vs}%")
+
+                    self.chk_viz_mirror.blockSignals(True)
+                    self.chk_viz_mirror.setChecked(k.get('viz_mirror', False))
+                    self.chk_viz_mirror.blockSignals(False)
+
+                    self.chk_viz_show_name.blockSignals(True)
+                    self.chk_viz_show_name.setChecked(k.get('viz_show_name', True))
+                    self.chk_viz_show_name.blockSignals(False)
+
+                    self._populate_viz_source_combo()
+                    src = k.get('viz_source', 'kps')
+                    dev_name = k.get('viz_device_name', 'default')
+                    self.combo_viz_source.blockSignals(True)
+                    if src == 'kps':
+                        self.combo_viz_source.setCurrentIndex(0)
+                    else:
+                        found = False
+                        for idx in range(1, self.combo_viz_source.count()):
+                            if self.combo_viz_source.itemData(idx) == dev_name:
+                                self.combo_viz_source.setCurrentIndex(idx)
+                                found = True
+                                break
+                        if not found:
+                            self.combo_viz_source.addItem(f"{dev_name} (Offline)", dev_name)
+                            self.combo_viz_source.setCurrentIndex(self.combo_viz_source.count() - 1)
+                    self.combo_viz_source.blockSignals(False)
+
+
                 self.floating_panel.show()
                 self.floating_panel.raise_()
                 
                 # Bring focus to main window to ensure DEL key capture works
                 self.setFocus()
                 break
+
 
     def _change_key_code(self, text):
         if not self._current_edit_key_id: return
@@ -1308,7 +1520,89 @@ class ControlWindow(QWidget):
                 events.config_changed.emit(ConfigManager.load())
                 break
 
+    # ── Visualizer change slots ───────────────────────────────────────────
+
+    def _save_viz_field(self, field, value):
+        """Helper: save a viz_* field for the current key and repaint."""
+        if not self._current_edit_key_id:
+            return
+        for k in self._config.get("keys", []):
+            if k.get("id") == self._current_edit_key_id:
+                k[field] = value
+                ConfigManager.save()
+                events.config_changed.emit(ConfigManager.load())
+                self.grid_canvas.reload_keys()
+                break
+
+    def _change_viz_color_start(self, color):
+        self._save_viz_field("viz_color_start", color)
+
+    def _change_viz_color_end(self, color):
+        self._save_viz_field("viz_color_end", color)
+
+    def _change_viz_bar_count(self, val):
+        self.lbl_viz_bar_count.setText(f"{Trans.t('viz_bar_count')} {val}")
+        self._save_viz_field("viz_bar_count", val)
+
+    def _change_viz_max_height(self, val):
+        self.lbl_viz_max_height.setText(f"{Trans.t('viz_max_height')} {val}%")
+        self._save_viz_field("viz_max_height", val)
+
+    def _change_viz_bar_gap(self, val):
+        self.lbl_viz_bar_gap.setText(f"{Trans.t('viz_bar_gap')} {val}px")
+        self._save_viz_field("viz_bar_gap", val)
+
+    def _change_viz_smoothing(self, val):
+        self.lbl_viz_smoothing.setText(f"{Trans.t('viz_smoothing')} {val}%")
+        self._save_viz_field("viz_smoothing", val)
+
+    def _change_viz_mirror(self, state):
+        self._save_viz_field("viz_mirror", self.chk_viz_mirror.isChecked())
+
+    def _change_viz_show_name(self, state):
+        self._save_viz_field("viz_show_name", self.chk_viz_show_name.isChecked())
+
+    def _populate_viz_source_combo(self):
+        self.combo_viz_source.blockSignals(True)
+        # Keep track of selected device
+        selected_data = self.combo_viz_source.currentData()
+        self.combo_viz_source.clear()
+        
+        # Add KPS
+        self.combo_viz_source.addItem(Trans.t("viz_source_kps", "KPS 点击数据"), "kps")
+        
+        # Add Audio devices
+        from core.audio_capture import AudioCapture
+        devices = AudioCapture.get_loopback_devices()
+        for d in devices:
+            self.combo_viz_source.addItem(d['name'], d['name'])
+            
+        # Try to restore selection
+        if selected_data is not None:
+            idx = self.combo_viz_source.findData(selected_data)
+            if idx >= 0:
+                self.combo_viz_source.setCurrentIndex(idx)
+        self.combo_viz_source.blockSignals(False)
+
+    def _change_viz_source(self, idx):
+        data = self.combo_viz_source.itemData(idx)
+        if data == "kps":
+            self._save_viz_field("viz_source", "kps")
+            self._save_viz_field("viz_device_name", "default")
+        else:
+            self._save_viz_field("viz_source", "audio")
+            self._save_viz_field("viz_device_name", data)
+            # Proactively start audio capture if user switches to audio
+            try:
+                from core.audio_capture import AudioCapture
+                AudioCapture.instance().start(data)
+            except Exception:
+                pass
+
+
     def _change_key_text_offset_y(self, val):
+
+
         if not self._current_edit_key_id: return
         for k in self._config.get("keys", []):
             if k.get("id") == self._current_edit_key_id:
@@ -1478,6 +1772,20 @@ class ControlWindow(QWidget):
             elif key_type == 'active_keys_count':
                 new_key['display_name'] = 'ACTIVE'
                 new_key['key_code'] = ''
+            elif key_type == 'kps_visualizer':
+                new_key['display_name'] = 'VIZ'
+                new_key['key_code'] = ''
+                new_key['viz_bar_count'] = 16
+                new_key['viz_max_height'] = 80
+                new_key['viz_color_start'] = [108, 99, 255, 220]
+                new_key['viz_color_end'] = [255, 80, 120, 220]
+                new_key['viz_bar_gap'] = 2
+                new_key['viz_smoothing'] = 60
+                new_key['viz_mirror'] = False
+                new_key['viz_show_name'] = True
+                new_key['viz_source'] = 'kps'
+                new_key['viz_device_name'] = 'default'
+
                 
             grid_size = self._config.get("display_window", {}).get("grid_size", 2)
             if grid_size == 0:

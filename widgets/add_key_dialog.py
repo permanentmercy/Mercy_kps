@@ -13,7 +13,7 @@ class AddKeyDialog(QDialog):
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Dialog)
         self.setModal(True)
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
-        self.resize(360, 220)
+        self.resize(360, 240)
         
         self.setStyleSheet("""
             QDialog {
@@ -83,6 +83,14 @@ class AddKeyDialog(QDialog):
         
         layout.addLayout(btn_layout)
         
+        # Second row: visualizer
+        btn_layout2 = QHBoxLayout()
+        btn_layout2.setSpacing(10)
+        self.btn_visualizer = QPushButton()
+        self.btn_visualizer.clicked.connect(lambda: self._select_special("kps_visualizer"))
+        btn_layout2.addWidget(self.btn_visualizer)
+        layout.addLayout(btn_layout2)
+        
         self.retranslate_ui()
 
     def _select_special(self, key_type):
@@ -96,6 +104,7 @@ class AddKeyDialog(QDialog):
         self.btn_kps.setText(Trans.t("add_key_kps", "每秒点击数 (KPS)"))
         self.btn_total.setText(Trans.t("add_key_total", "总点击数 (Total)"))
         self.btn_active.setText(Trans.t("add_key_active", "当前触发数 (Active)"))
+        self.btn_visualizer.setText(Trans.t("add_key_visualizer", "音频可视化 (Visualizer)"))
 
     def showEvent(self, event):
         super().showEvent(event)

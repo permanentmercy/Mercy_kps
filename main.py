@@ -86,8 +86,17 @@ def main():
         control_win._force_close = True
         display_win.close()
         control_win.close()
+        # Stop audio capture and release resources if started
+        try:
+            from core.audio_capture import AudioCapture
+            if AudioCapture._instance is not None:
+                AudioCapture._instance.stop()
+            AudioCapture.terminate_global_pa()
+        except Exception:
+            pass
         app.quit()
     action_exit.triggered.connect(on_exit)
+
     
     tray_icon.setContextMenu(tray_menu)
     tray_icon.activated.connect(lambda reason: (

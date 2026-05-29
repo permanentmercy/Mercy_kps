@@ -1,9 +1,15 @@
 from PyQt6.QtWidgets import QWidget, QMenu
-from PyQt6.QtGui import QPainter, QColor, QPen, QBrush, QFont, QMouseEvent, QPainterPath
+from PyQt6.QtGui import QPainter, QColor, QPen, QBrush, QFont, QMouseEvent, QPainterPath, QLinearGradient
 from PyQt6.QtCore import Qt, QRectF, QPropertyAnimation, QEasingCurve, pyqtProperty
 from core.events import events
 from core.config_manager import ConfigManager
 from core.i18n import Trans
+
+try:
+    import numpy as _np
+    _HAS_NUMPY = True
+except ImportError:
+    _HAS_NUMPY = False
 
 class KeyWidget(QWidget):
     def __init__(self, key_config, is_preview=False, grid_size=20, scale_x=1.0, scale_y=1.0, parent=None):
@@ -48,6 +54,20 @@ class KeyWidget(QWidget):
                     self._kps_timer = QTimer(self)
                     self._kps_timer.timeout.connect(self._on_kps_timeout)
                     self._kps_timer.start(100)
+                
+                if key_type == 'kps_visualizer':
+                    self._click_timestamps = []
+                    self._viz_bars = []  # smoothed bar heights [0..1]
+                    from PyQt6.QtCore import QTimer
+                    self._viz_timer = QTimer(self)
+                    self._viz_timer.timeout.connect(self._on_viz_timeout)
+                    self._viz_timer.start(50)
+                    # Start audio capture singleton if needed (idempotent)
+                    if self.cfg.get('viz_source', 'kps') == 'audio':
+                        from core.audio_capture import AudioCapture
+                        AudioCapture.instance().start(self.cfg.get('viz_device_name'))
+
+
 
     @pyqtProperty(float)
     def current_scale(self):
@@ -74,21 +94,124 @@ class KeyWidget(QWidget):
                 self.update()
 
     def _on_special_key_press_update(self, key_code):
-        if self.cfg.get('key_type', 'normal') == 'kps':
+        key_type = self.cfg.get('key_type', 'normal')
+        if key_type in ('kps', 'kps_visualizer'):
             import time
             if not hasattr(self, '_click_timestamps'):
                 self._click_timestamps = []
             self._click_timestamps.append(time.time())
-        self._check_value_update()
-        self.update()
+        if key_type != 'kps_visualizer':
+            self._check_value_update()
+            self.update()
 
     def _on_special_key_release_update(self, key_code):
-        self._check_value_update()
-        self.update()
+        if self.cfg.get('key_type', 'normal') != 'kps_visualizer':
+            self._check_value_update()
+            self.update()
 
     def _on_kps_timeout(self):
         self._check_value_update()
         self.update()
+
+    # ── Visualizer ──────────────────────────────────────────────────────────
+
+    def _compute_fft_bars(self, n_bars: int) -> list:
+        """Route to the correct bar source based on viz_source config."""
+        source = self.cfg.get('viz_source', 'kps')
+        if source == 'audio':
+            return self._compute_audio_bars(n_bars)
+        return self._compute_kps_bars(n_bars)
+
+    def _compute_kps_bars(self, n_bars: int) -> list:
+        """Build an impulse signal from click timestamps and return normalised
+        bar heights via FFT.  Falls back to a simple magnitude estimate when
+        numpy is not available."""
+        import time
+        now = time.time()
+        window = 2.0          # seconds of history
+        sample_rate = 500     # samples per second
+        n_samples = int(window * sample_rate)
+
+        # Clean timestamps older than window
+        self._click_timestamps = [t for t in self._click_timestamps if now - t <= window]
+
+        if _HAS_NUMPY:
+            # Build impulse signal
+            signal = _np.zeros(n_samples, dtype=_np.float32)
+            for t in self._click_timestamps:
+                idx = int((now - t) * sample_rate)
+                if 0 <= idx < n_samples:
+                    signal[n_samples - 1 - idx] = 1.0
+
+            # FFT → magnitude spectrum (only positive frequencies)
+            spectrum = _np.abs(_np.fft.rfft(signal))
+            # Discard DC and take only useful bins (up to half of spectrum)
+            spectrum = spectrum[1:]
+            usable = max(len(spectrum), 1)
+
+            # Bin the spectrum into n_bars groups
+            bars = []
+            bin_size = max(1, usable // n_bars)
+            for i in range(n_bars):
+                start = i * bin_size
+                end = min(start + bin_size, usable)
+                val = float(_np.mean(spectrum[start:end])) if end > start else 0.0
+                bars.append(val)
+
+            # Normalise
+            mx = max(bars) if bars else 0.0
+            if mx > 1e-6:
+                bars = [v / mx for v in bars]
+            return bars
+
+        else:
+            # Fallback: intensity proportional to recent click density per band
+            kps = len(self._click_timestamps)
+            import math, random
+            bars = []
+            for i in range(n_bars):
+                phase = i / max(n_bars - 1, 1)
+                base = max(0.0, 1.0 - phase) * (kps / 20.0)
+                noise = random.uniform(0, 0.15)
+                bars.append(min(1.0, base + noise))
+            return bars
+
+    def _compute_audio_bars(self, n_bars: int) -> list:
+        """Pull the latest FFT bars from the system audio capture singleton."""
+        try:
+            from core.audio_capture import AudioCapture
+            ac = AudioCapture.instance()
+            if not ac.available:
+                # Capture not ready yet – show flat bars
+                return [0.0] * n_bars
+            return ac.get_bars(n=n_bars)
+        except Exception:
+            return [0.0] * n_bars
+
+    def _on_viz_timeout(self):
+        """50 ms tick: recompute FFT bars and smooth-blend into current state."""
+        n_bars = max(4, self.cfg.get('viz_bar_count', 16))
+        smoothing = max(0.0, min(0.95, self.cfg.get('viz_smoothing', 60) / 100.0))
+
+        # If source switched to audio, ensure capture is running
+        if self.cfg.get('viz_source', 'kps') == 'audio':
+            try:
+                from core.audio_capture import AudioCapture
+                AudioCapture.instance().start(self.cfg.get('viz_device_name'))
+            except Exception:
+                pass
+
+        new_bars = self._compute_fft_bars(n_bars)
+
+        # Ensure current bar list matches length
+        if len(self._viz_bars) != n_bars:
+            self._viz_bars = [0.0] * n_bars
+
+        for i in range(n_bars):
+            self._viz_bars[i] = self._viz_bars[i] * smoothing + new_bars[i] * (1.0 - smoothing)
+
+        self.update()
+
 
     def _check_value_update(self):
         key_type = self.cfg.get('key_type', 'normal')
@@ -209,7 +332,19 @@ class KeyWidget(QWidget):
             coy = int(coy * self.scale_y)
             
         key_type = self.cfg.get('key_type', 'normal')
+
+        # ── kps_visualizer: draw FFT bar chart ─────────────────────────────
+        if key_type == 'kps_visualizer':
+            self._paint_visualizer(p, w, h, border_w, radius)
+            return
+
+        # ── Standard text / counter drawing ────────────────────────────────
+
         
+        if self.is_preview:
+            toy = int(toy * self.scale_y)
+            coy = int(coy * self.scale_y)
+            
         # Determine Display Name: nickname overrides display_name for visual text
         if key_type == 'normal':
             disp_name = self.cfg.get('nickname') or self.cfg.get('display_name', '')
@@ -232,6 +367,9 @@ class KeyWidget(QWidget):
             if parent_win and hasattr(parent_win, '_key_widgets'):
                 active_cnt = sum(1 for kw in parent_win._key_widgets if kw.cfg.get('key_type', 'normal') == 'normal' and getattr(kw, 'is_pressed', False))
             val = str(active_cnt)
+        else:
+            disp_name = self.cfg.get('nickname') or self.cfg.get('display_name', '')
+            val = ''
             
         show_counter = self.cfg.get('show_counter', False)
         
@@ -269,7 +407,84 @@ class KeyWidget(QWidget):
         else:
             p.drawText(QRectF(0, toy, w, h), Qt.AlignmentFlag.AlignCenter, disp_name)
 
+    def _paint_visualizer(self, p: QPainter, w: float, h: float,
+                          border_w: int, radius: int):
+        """Draw the FFT equaliser bar chart inside the widget bounds."""
+        bars = list(getattr(self, '_viz_bars', []))
+        n_bars = max(4, self.cfg.get('viz_bar_count', 16))
+
+        # Use static demo bars in preview mode (no live timer)
+        if self.is_preview or not bars or len(bars) != n_bars:
+            import math
+            bars = [0.3 + 0.5 * abs(math.sin(i * 0.7)) for i in range(n_bars)]
+
+        max_h_pct = max(10, min(100, self.cfg.get('viz_max_height', 80))) / 100.0
+        gap = max(0, self.cfg.get('viz_bar_gap', 2))
+        mirror = self.cfg.get('viz_mirror', False)
+        show_name = self.cfg.get('viz_show_name', True)
+
+        c_start = self.cfg.get('viz_color_start', [108, 99, 255, 220])
+        c_end   = self.cfg.get('viz_color_end',   [255, 80, 120, 220])
+
+        if mirror:
+            bars = bars + bars[::-1]
+
+        actual_n = len(bars)
+        margin = max(border_w, 2)
+        draw_w = w - margin * 2
+        draw_h = h - margin * 2
+
+        total_gap = gap * (actual_n - 1)
+        bar_w = max(1.0, (draw_w - total_gap) / actual_n)
+
+        p.save()
+        p.setClipRect(QRectF(margin, margin, draw_w, draw_h))
+        p.setPen(Qt.PenStyle.NoPen)
+
+        for i, height_ratio in enumerate(bars):
+            bar_h = draw_h * max_h_pct * max(0.0, min(1.0, height_ratio))
+            x = margin + i * (bar_w + gap)
+            y = h - margin - bar_h  # grow upward
+
+            # Per-bar gradient (low-freq color at left/bottom → high-freq at right/top)
+            t = i / max(actual_n - 1, 1)
+            r = int(c_start[0] + (c_end[0] - c_start[0]) * t)
+            g = int(c_start[1] + (c_end[1] - c_start[1]) * t)
+            b = int(c_start[2] + (c_end[2] - c_start[2]) * t)
+            a = int(c_start[3] + (c_end[3] - c_start[3]) * t)
+
+            # Vertical gradient within bar: brighter at top
+            grad = QLinearGradient(x, y, x, y + bar_h)
+            top_color = QColor(min(255, r + 40), min(255, g + 40), min(255, b + 40), a)
+            bot_color = QColor(max(0, r - 30), max(0, g - 30), max(0, b - 30), max(0, a - 60))
+            grad.setColorAt(0.0, top_color)
+            grad.setColorAt(1.0, bot_color)
+            p.setBrush(QBrush(grad))
+
+            bar_radius = min(bar_w / 2.0, 3.0)
+            p.drawRoundedRect(QRectF(x, y, bar_w, bar_h), bar_radius, bar_radius)
+
+        p.restore()
+
+        # Optional: overlay key name at top
+        if show_name:
+            disp_name = self.cfg.get('nickname') or self.cfg.get('display_name', 'VIZ')
+            text_c = self.cfg.get('text_color', [255, 255, 255, 200])
+            p.setPen(QColor(*text_c))
+            fs = self.cfg.get('font_size', 12)
+            if self.is_preview:
+                fs = max(5, int(fs * self.scale_x))
+            font = QFont("Segoe UI", fs)
+            font.setBold(self.cfg.get('font_bold', True))
+            p.setFont(font)
+            toy = self.cfg.get('text_offset_y', 0)
+            if self.is_preview:
+                toy = int(toy * self.scale_y)
+            p.drawText(QRectF(0, toy, w, h * 0.4),
+                       Qt.AlignmentFlag.AlignCenter, disp_name)
+
     # Mouse Events for dragging and context menu (Only active in preview mode)
+
     def mousePressEvent(self, e: QMouseEvent):
         if not self.is_preview:
             e.ignore()
