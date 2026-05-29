@@ -567,7 +567,7 @@ class ControlWindow(QWidget):
         self.lbl_display_width = QLabel()
         vbox_dw.addWidget(self.lbl_display_width)
         self.slider_display_width = NonScrollSlider(Qt.Orientation.Horizontal)
-        self.slider_display_width.setRange(10, 300)
+        self.slider_display_width.setRange(10, 1500)
         self.slider_display_width.valueChanged.connect(self._change_key_display_width)
         vbox_dw.addWidget(self.slider_display_width)
         vbox_shape.addWidget(self.widget_display_width)

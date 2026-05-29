@@ -49,11 +49,9 @@ class DisplayWindow(QWidget):
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
         
         # Map the initial size based on editor_key_size
-        base_w = self._cfg.get('width', 600)
-        base_h = self._cfg.get('height', 400)
+        base_w = self._cfg.get('width', 1000)
+        base_h = self._cfg.get('height', 600)
         editor_key_size = self._cfg.get("editor_key_size", 60)
-        if editor_key_size <= 0:
-            editor_key_size = 60
         scale_factor = 60.0 / editor_key_size
         
         mapped_win_w = int(base_w * scale_factor)
@@ -189,11 +187,9 @@ class DisplayWindow(QWidget):
         self._cfg = self._config.get("display_window", {})
         
         # Update layout window size if changed
-        base_w = self._cfg.get('width', 600)
-        base_h = self._cfg.get('height', 400)
+        base_w = self._cfg.get('width', 1000)
+        base_h = self._cfg.get('height', 600)
         editor_key_size = self._cfg.get("editor_key_size", 60)
-        if editor_key_size <= 0:
-            editor_key_size = 60
         scale_factor = 60.0 / editor_key_size
         
         mapped_win_w = int(base_w * scale_factor)

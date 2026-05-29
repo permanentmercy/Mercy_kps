@@ -128,7 +128,7 @@ class ConfigManager:
             "language": "zh_CN",
             "display_window": {
                 "x": 100, "y": 100,
-                "width": 600, "height": 400,
+                "width": 1000, "height": 600,
                 "monitor": 0,
                 "background_color": [0, 0, 0, 0],
                 "grid_visible": True,
