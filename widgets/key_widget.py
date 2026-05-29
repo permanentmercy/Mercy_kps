@@ -341,9 +341,7 @@ class KeyWidget(QWidget):
         # ── Standard text / counter drawing ────────────────────────────────
 
         
-        if self.is_preview:
-            toy = int(toy * self.scale_y)
-            coy = int(coy * self.scale_y)
+
             
         # Determine Display Name: nickname overrides display_name for visual text
         if key_type == 'normal':
