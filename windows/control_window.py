@@ -828,6 +828,7 @@ class ControlWindow(QWidget):
             }
         """)
         self.combo_viz_source.setMaximumWidth(240)
+        self.combo_viz_source.wheelEvent = lambda event: event.ignore()
         self.combo_viz_source.currentIndexChanged.connect(self._change_viz_source)
         _vs_row.addWidget(self.combo_viz_source, 1)
         vbox_viz.addWidget(self.widget_viz_source)
